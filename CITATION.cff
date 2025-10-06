@@ -8,7 +8,7 @@ authors:
     orcid: https://orcid.org/0009-0007-5607-2002
 version: "1.0.0"
 date-released: "2025-10-06"
-repository-code: "https://github.com/CHANGE_ME/mars"
+repository-code: "https://github.com/FS-OR/MaRS-Cardiovascular-10-year-Risk-Score-non-lab"
 preferred-citation:
   type: software
   title: "MaRS (Marciu Risk Score): Non-laboratory cardiovascular risk framework (v1.0)"
@@ -18,7 +18,7 @@ preferred-citation:
       orcid: https://orcid.org/0009-0007-5607-2002
   year: 2025
   version: "1.0.0"
-  url: "https://github.com/CHANGE_ME/mars"
+  url: "https://github.com/FS-OR/MaRS-Cardiovascular-10-year-Risk-Score-non-lab"
 keywords:
   - MaRS
   - cardiovascular risk
