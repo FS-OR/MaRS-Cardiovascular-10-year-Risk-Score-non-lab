@@ -1,1 +1,98 @@
+/* MaRS – Style Sheet (v1.0)
+   Author: Vicențiu Bogdan Ion Marciu
+   License: MaRS Research License (Non-Commercial)
+*/
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  background-color: #f8f9fa;
+  margin: 40px auto;
+  max-width: 520px;
+  color: #222;
+}
+
+h1 {
+  text-align: center;
+  color: #0e7afe;
+  font-size: 1.8em;
+  margin-bottom: 20px;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+label {
+  display: block;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+input,
+select {
+  width: 100%;
+  margin-top: 4px;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+
+.btn {
+  width: 100%;
+  margin-top: 16px;
+  background-color: #0e7afe;
+  color: #fff;
+  border: none;
+  padding: 10px 0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+.btn:hover {
+  background-color: #0b66d1;
+}
+
+.results {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.ok {
+  color: #007e33;
+}
+
+.warn {
+  color: #ff8800;
+}
+
+.bad {
+  color: #cc0000;
+}
+
+.foot {
+  margin-top: 30px;
+  font-size: 13px;
+  text-align: center;
+  color: #555;
+  line-height: 1.4em;
+}
+
+/* Optional divider */
+hr {
+  margin: 25px 0;
+  border: none;
+  border-top: 1px solid #ddd;
+}
 
