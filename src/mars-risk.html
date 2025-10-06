@@ -1,1 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>MaRS — 10-Year Cardiovascular Risk Calculator</title>
+  <link rel="stylesheet" href="mars-style.css" />
+</head>
+<body>
 
+  <h1>MaRS — 10-Year Cardiovascular Risk Calculator</h1>
+
+  <div class="card">
+    <form id="mars-form">
+      <label>Age (30–79)
+        <input type="number" id="age" min="30" max="79" required />
+      </label>
+
+      <label>Sex
+        <select id="sex">
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+      </label>
+
+      <label>SBP (90–200 mmHg)
+        <input type="number" id="sbp" min="90" max="200" required />
+      </label>
+
+      <label>Antihypertensive treatment
+        <select id="treated">
+          <option value="0">No</option>
+          <option value="1">Yes</option>
+        </select>
+      </label>
+
+      <label>Smoker
+        <select id="smoker">
+          <option value="0">No</option>
+          <option value="1">Yes</option>
+        </select>
+      </label>
+
+      <label>Diabetes
+        <select id="diabetes">
+          <option value="0">No</option>
+          <option value="1">Yes</option>
+        </select>
+      </label>
+
+      <label>BMI (16–50)
+        <input type="number" id="bmi" min="16" max="50" step="0.1" required />
+      </label>
+
+      <label>Family history of early CVD
+        <select id="family">
+          <option value="0">No</option>
+          <option value="1">Yes</option>
+        </select>
+      </label>
+
+      <button class="btn" type="button" onclick="calculateMaRS()">Calculate MaRS Risk</button>
+    </form>
+  </div>
+
+  <div id="marsResult" class="results"></div>
+
+  <p class="foot">
+    MaRS (Marciu Risk Score) — Non-laboratory 10-year cardiovascular risk estimation.<br>
+    For research and educational use only. © 2025 Vicențiu Bogdan Ion Marciu
+  </p>
+
+  <script src="mars-risk.js"></script>
+</body>
+</html>
