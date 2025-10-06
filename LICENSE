@@ -1,45 +1,36 @@
-MaRS Research License (Non-Commercial)
+MaRS Open Collaboration License
 Version 1.0 — 2025-10-06
 
 Copyright © 2025 Vicențiu Bogdan Ion Marciu.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this
-software and associated documentation files (the “Software”), to use, copy, and modify
-the Software for NON-COMMERCIAL research and educational purposes only, subject to the
-following conditions:
+We’re thrilled to share MaRS (Marciu Risk Score), a research framework for non-laboratory cardiovascular risk assessment, with the global community! Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, subject to the following conditions:
 
-1. Non-Commercial Use Only
-   Commercial use of the Software, in whole or in part, is strictly prohibited without
-   prior written permission. “Commercial use” includes any use intended for or directed
-   toward commercial advantage or monetary compensation.
+1. Open Use for Research and Beyond
+The Software is designed to advance cardiovascular health research. You’re free to use the Software for non-commercial purposes (e.g., academic research, educational projects) and explore commercial applications. If you’re considering commercial use, please reach out to the author, Vicențiu Bogdan Ion Marciu, at bogdan@cardionet.ro to discuss exciting collaboration opportunities, such as joint research, clinical studies, or innovative applications. Commercial use includes any activity intended for monetary gain or commercial advantage.
 
-2. Redistribution & Derivatives (Non-Commercial)
-   You may distribute unmodified or modified versions of the Software solely for
-   non-commercial research/education, provided that (a) this license notice is included
-   in all copies, and (b) you clearly mark all changes made. Any distribution that is
-   commercial in nature is prohibited without permission.
+2. Promote MaRS and Cite Our Work
+Help us spread the word about MaRS! Any use of the Software, whether commercial or non-commercial, must include clear attribution to the author, Vicențiu Bogdan Ion Marciu, and the marks “MaRS” and “Marciu Risk Score” in all distributions, documentation, or promotional materials. For academic or research purposes, please cite the Software as follows:
+Marciu, Vicențiu Bogdan Ion. (2025). MaRS (Marciu Risk Score): Non-laboratory cardiovascular risk framework (v1.0.0). https://github.com/FS-OR/MaRS-Cardiovascular-10-year-Risk-Score-non-lab
+Attribution and citation must be prominently displayed to celebrate our contribution to cardiovascular research!
 
-3. Trademarks & Naming
-   “MaRS” and “Marciu Risk Score” are names/marks of the author. You may not use these
-   names or confusingly similar designations in connection with any distribution,
-   service, or product without written permission.
+3. Sharing and Building on MaRS
+Feel free to share unmodified or modified versions of the Software, provided that:
+(a) you include this license notice in all copies,
+(b) you clearly mark any changes made,
+(c) you include the attribution and citation as outlined in Section 2, and
+(d) for commercial distributions, you contact the author as described in Section 1 to explore partnership possibilities.
 
-4. No Warranty
-   THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
-   INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-   PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
-   ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-   OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
-   OTHER DEALINGS IN THE SOFTWARE.
+4. Trademarks & Naming
+“MaRS” and “Marciu Risk Score” are marks of the author. You may use these names as part of the required attribution in Section 2 or with written permission from the author for other purposes. Avoid using confusingly similar names in connection with any distribution, service, or product.
 
-5. Not a Medical Device / Clinical Responsibility
-   This Software is a research framework and is NOT a medical device. It does not
-   provide diagnosis or treatment. Clinical decisions remain solely with licensed
-   clinicians.
+5. No Warranty
+The Software is provided “as is”, without warranty of any kind, express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, or non-infringement. The author shall not be liable for any claim, damages, or other liability arising from the use of the Software.
 
-6. Termination
-   Any breach of this License automatically terminates the permissions granted herein.
-   Upon termination you must cease all use and destroy any copies of the Software.
+6. Not a Medical Device
+MaRS is a research framework for non-laboratory cardiovascular risk assessment and is NOT a medical device. It does not provide diagnosis or treatment. Clinical decisions remain solely with licensed clinicians.
 
-7. Contact for Commercial Licensing
-   For commercial licensing inquiries, contact: <bogdan@cardionet.ro>.
+7. Termination
+Failure to comply with this License, such as not providing attribution or not contacting the author for commercial use, terminates the permissions granted herein. Upon termination, you must stop using and destroy any copies of the Software.
+
+8. Join Our Mission
+Ready to collaborate? Whether you’re a researcher, clinician, or innovator, we’d love to hear from you! Contact Vicențiu Bogdan Ion Marciu at bogdan@cardionet.ro to discuss partnerships, research opportunities, or commercial ideas. Let’s revolutionize cardiovascular risk assessment together!
