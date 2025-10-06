@@ -3,34 +3,61 @@ Version 1.0 — 2025-10-06
 
 Copyright © 2025 Vicențiu Bogdan Ion Marciu.
 
-We’re thrilled to share MaRS (Marciu Risk Score), a research framework for non-laboratory cardiovascular risk assessment, with the global community! Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, subject to the following conditions:
+We’re thrilled to share MaRS (Marciu Risk Score), a research framework for non-laboratory 
+cardiovascular risk assessment, with the global community! Permission is hereby granted, 
+free of charge, to any person obtaining a copy of this software and associated documentation 
+files (the “Software”), to use, copy, modify, merge, publish, distribute, sublicense, and/or 
+sell copies of the Software, subject to the following conditions:
 
 1. Open Use for Research and Beyond
-The Software is designed to advance cardiovascular health research. You’re free to use the Software for non-commercial purposes (e.g., academic research, educational projects) and explore commercial applications. If you’re considering commercial use, please reach out to the author, Vicențiu Bogdan Ion Marciu, at bogdan@cardionet.ro to discuss exciting collaboration opportunities, such as joint research, clinical studies, or innovative applications. Commercial use includes any activity intended for monetary gain or commercial advantage.
+The Software is designed to advance cardiovascular health research. You’re free to use the 
+Software for non-commercial purposes (e.g., academic research, educational projects) and 
+explore commercial applications. If you’re considering commercial use, please reach out to 
+the author, Vicențiu Bogdan Ion Marciu, at bogdan@cardionet.ro to discuss exciting collaboration 
+opportunities, such as joint research, clinical studies, or innovative applications. Commercial 
+use includes any activity intended for monetary gain or commercial advantage.
 
 2. Promote MaRS and Cite Our Work
-Help us spread the word about MaRS! Any use of the Software, whether commercial or non-commercial, must include clear attribution to the author, Vicențiu Bogdan Ion Marciu, and the marks “MaRS” and “Marciu Risk Score” in all distributions, documentation, or promotional materials. For academic or research purposes, please cite the Software as follows:
-Marciu, Vicențiu Bogdan Ion. (2025). MaRS (Marciu Risk Score): Non-laboratory cardiovascular risk framework (v1.0.0). https://github.com/FS-OR/MaRS-Cardiovascular-10-year-Risk-Score-non-lab
-Attribution and citation must be prominently displayed to celebrate our contribution to cardiovascular research!
+Help us spread the word about MaRS! Any use of the Software, whether commercial or non-commercial, 
+must include clear attribution to the author, Vicențiu Bogdan Ion Marciu, and the marks “MaRS” 
+and “Marciu Risk Score” in all distributions, documentation, or promotional materials. For 
+academic or research purposes, please cite the Software as follows:
+Marciu, Vicențiu Bogdan Ion. (2025). MaRS (Marciu Risk Score): Non-laboratory cardiovascular 
+risk framework (v1.0.0). https://github.com/FS-OR/MaRS-Cardiovascular-10-year-Risk-Score-non-lab
+Attribution and citation must be prominently displayed to celebrate our contribution to 
+cardiovascular research!
 
 3. Sharing and Building on MaRS
 Feel free to share unmodified or modified versions of the Software, provided that:
 (a) you include this license notice in all copies,
 (b) you clearly mark any changes made,
 (c) you include the attribution and citation as outlined in Section 2, and
-(d) for commercial distributions, you contact the author as described in Section 1 to explore partnership possibilities.
+(d) for commercial distributions, you contact the author as described in Section 
+1 to explore partnership possibilities.
 
 4. Trademarks & Naming
-“MaRS” and “Marciu Risk Score” are marks of the author. You may use these names as part of the required attribution in Section 2 or with written permission from the author for other purposes. Avoid using confusingly similar names in connection with any distribution, service, or product.
+“MaRS” and “Marciu Risk Score” are marks of the author. You may use these names 
+as part of the required attribution in Section 2 or with written permission from 
+the author for other purposes. Avoid using confusingly similar names in connection 
+with any distribution, service, or product.
 
 5. No Warranty
-The Software is provided “as is”, without warranty of any kind, express or implied, including but not limited to warranties of merchantability, fitness for a particular purpose, or non-infringement. The author shall not be liable for any claim, damages, or other liability arising from the use of the Software.
+The Software is provided “as is”, without warranty of any kind, express or implied, 
+including but not limited to warranties of merchantability, fitness for a particular 
+purpose, or non-infringement. The author shall not be liable for any claim, damages, 
+or other liability arising from the use of the Software.
 
 6. Not a Medical Device
-MaRS is a research framework for non-laboratory cardiovascular risk assessment and is NOT a medical device. It does not provide diagnosis or treatment. Clinical decisions remain solely with licensed clinicians.
+MaRS is a research framework for non-laboratory cardiovascular risk assessment and is 
+NOT a medical device. It does not provide diagnosis or treatment. Clinical decisions 
+remain solely with licensed clinicians.
 
 7. Termination
-Failure to comply with this License, such as not providing attribution or not contacting the author for commercial use, terminates the permissions granted herein. Upon termination, you must stop using and destroy any copies of the Software.
+Failure to comply with this License, such as not providing attribution or not contacting 
+the author for commercial use, terminates the permissions granted herein. Upon termination, 
+you must stop using and destroy any copies of the Software.
 
 8. Join Our Mission
-Ready to collaborate? Whether you’re a researcher, clinician, or innovator, we’d love to hear from you! Contact Vicențiu Bogdan Ion Marciu at bogdan@cardionet.ro to discuss partnerships, research opportunities, or commercial ideas. Let’s revolutionize cardiovascular risk assessment together!
+Ready to collaborate? Whether you’re a researcher, clinician, or innovator, we’d love to 
+hear from you! Contact Vicențiu Bogdan Ion Marciu at bogdan@cardionet.ro to discuss partnerships, 
+research opportunities, or commercial ideas. Let’s revolutionize cardiovascular risk assessment together!
