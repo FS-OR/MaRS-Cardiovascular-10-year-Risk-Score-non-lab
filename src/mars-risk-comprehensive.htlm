@@ -1,1 +1,243 @@
+<!DOCTYPE html>
+<!-- 
+  MaRS — Comprehensive Cardiovascular Risk Tools
+  Author: Vicențiu Bogdan Ion Marciu
+  Version: 1.0 — October 2025
+  License: MaRS Open Collaboration License
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MaRS — Comprehensive Cardiovascular Risk Tools</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
+<style>
+/* MaRS – Style Sheet (v1.0)
+   Author: Vicențiu Bogdan Ion Marciu
+   License: MaRS Open Collaboration License
+*/
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  background-color: #f8f9fa;
+  margin: 40px auto;
+  max-width: 520px;
+  color: #222;
+}
+h1, h2 {
+  color: #0e7afe;
+  text-align: center;
+}
+h1 {
+  font-size: 1.8em;
+  margin-bottom: 20px;
+}
+h2 {
+  font-size: 1.4em;
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+.card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+label {
+  display: block;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+input, select {
+  width: 100%;
+  margin-top: 4px;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+.row { display: flex; flex-wrap: wrap; gap: 12px; }
+.btn {
+  width: 100%;
+  margin-top: 16px;
+  background-color: #0e7afe;
+  color: #fff;
+  border: none;
+  padding: 10px 0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+.btn:hover { background-color: #0b66d1; }
+.results { margin-top: 18px; text-align: center; font-size: 18px; font-weight: 600; }
+.ok { color: #007e33; } .warn { color: #ff8800; } .bad { color: #cc0000; }
+.foot {
+  margin-top: 30px;
+  font-size: 13px;
+  text-align: center;
+  color: #555;
+  line-height: 1.4em;
+}
+hr {
+  margin: 25px 0;
+  border: none;
+  border-top: 1px solid #ddd;
+}
+.muted { color: #666; font-size: 13px; }
+.pill {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.banner {
+  background: #e6f0ff;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.banner a {
+  color: #0e7afe;
+  text-decoration: none;
+}
+.banner a:hover { text-decoration: underline; }
+.chart-container {
+  margin-top: 20px;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+</style>
+</head>
+<body>
+
+<!-- Banner -->
+<div class="banner">
+  <h2>MaRS — Comprehensive Cardiovascular Risk Tools</h2>
+  <p>MaRS is a research project for non-laboratory cardiovascular risk determination, currently under validation within the <b>Fast Science – Open Research</b> initiative. It aims to promote simple and broad participation of health professionals in clinical research.</p>
+  <p><a href="https://github.com/FS-OR/MaRS-Cardiovascular-10-year-Risk-Score-non-lab" target="_blank">GitHub Repository</a> | 
+  <a href="https://github.com/FS-OR/MaRS-Cardiovascular-10-year-Risk-Score-non-lab/blob/main/LICENSE" target="_blank">MaRS Open Collaboration License</a></p>
+</div>
+
+<h1>MaRS — Comprehensive Cardiovascular Risk Tools</h1>
+<hr>
+
+<!-- ========== 1. BLOOD PRESSURE INTERPRETER ========== -->
+<h2>1. Blood Pressure Interpreter — AHA vs ESH</h2>
+<div class="card">
+  <div class="row">
+    <div><label for="sbp">SBP (mmHg)</label><input id="sbp" type="number" min="50" max="260" step="1"></div>
+    <div><label for="dbp">DBP (mmHg)</label><input id="dbp" type="number" min="30" max="160" step="1"></div>
+  </div>
+  <button class="btn" id="runBtn">Interpret</button>
+</div>
+<div class="results" id="results"></div>
+
+<script>
+function run() {
+  const sbp = parseFloat(document.getElementById('sbp').value);
+  const dbp = parseFloat(document.getElementById('dbp').value);
+  if (isNaN(sbp) || isNaN(dbp)) {
+    document.getElementById('results').innerHTML = '<div class="card">Enter both SBP and DBP.</div>';
+    return;
+  }
+  if (dbp >= sbp) {
+    document.getElementById('results').innerHTML = '<div class="card bad">DBP must be lower than SBP.</div>';
+    return;
+  }
+  let tone = 'ok', msg = 'Normal range.';
+  if (sbp >= 180 || dbp >= 120) { tone = 'bad'; msg = 'Hypertensive Crisis'; }
+  else if (sbp >= 140 || dbp >= 90) { tone = 'bad'; msg = 'Stage 2 Hypertension'; }
+  else if (sbp >= 130 || dbp >= 80) { tone = 'warn'; msg = 'Stage 1 Hypertension'; }
+  else if (sbp >= 120 && dbp < 80) { tone = 'warn'; msg = 'Elevated'; }
+  document.getElementById('results').innerHTML = `<div class="card ${tone}">${msg}</div>`;
+}
+document.getElementById('runBtn').addEventListener('click', run);
+</script>
+
+<hr>
+
+<!-- ========== 2. MaRS RISK CALCULATOR ========== -->
+<h2>2. MaRS 10-Year Cardiovascular Risk Calculator</h2>
+<div class="card">
+  <form id="mars-form">
+    <div class="row">
+      <div><label>Age (30–79)</label><input type="number" id="mars_age" min="30" max="79" required></div>
+      <div><label>Sex</label><select id="mars_sex"><option value="male">Male</option><option value="female">Female</option></select></div>
+      <div><label>SBP (90–200)</label><input type="number" id="mars_sbp" min="90" max="200" required></div>
+      <div><label>Antihypertensive tx</label><select id="mars_treated"><option value="no">No</option><option value="yes">Yes</option></select></div>
+      <div><label>Smoker</label><select id="mars_smoker"><option value="no">No</option><option value="yes">Yes</option></select></div>
+      <div><label>Diabetes</label><select id="mars_diabetes"><option value="no">No</option><option value="yes">Yes</option></select></div>
+      <div><label>BMI (16–50)</label><input type="number" id="mars_bmi" min="16" max="50" step="0.1"></div>
+      <div><label>Family History</label><select id="mars_family"><option value="no">No</option><option value="yes">Yes</option></select></div>
+    </div>
+    <button class="btn" type="button" onclick="calculateMaRSRisk()">Calculate MaRS Risk</button>
+  </form>
+</div>
+<div id="mars-result" class="results"></div>
+
+<script>
+function calculateMaRSRisk(){
+  const age = parseFloat(document.getElementById('mars_age').value);
+  const sex = (document.getElementById('mars_sex').value === 'male') ? 1 : 0;
+  const sbp = parseFloat(document.getElementById('mars_sbp').value);
+  const treated = (document.getElementById('mars_treated').value === 'yes') ? 1 : 0;
+  const smoker = (document.getElementById('mars_smoker').value === 'yes') ? 1 : 0;
+  const diabetes = (document.getElementById('mars_diabetes').value === 'yes') ? 1 : 0;
+  const bmi = parseFloat(document.getElementById('mars_bmi').value) || 25;
+  const family = (document.getElementById('mars_family').value === 'yes') ? 1 : 0;
+  const logit = -3.2 + 0.70*((age-50)/10) + 0.45*sex + 0.18*((sbp-120)/10) + 0.15*treated + 0.70*smoker + 0.70*diabetes + 0.22*((bmi-25)/5) + 0.40*family;
+  const risk = 100/(1+Math.exp(-logit));
+  let category = (risk<10)?'Low':(risk<20)?'Intermediate':'High';
+  let tone = (risk<10)?'ok':(risk<20)?'warn':'bad';
+  document.getElementById('mars-result').innerHTML = `<div class="card"><b>10-year risk:</b> ${risk.toFixed(2)}%<br><b>Category:</b> <span class="pill ${tone}">${category}</span><br><b>Logit:</b> ${logit.toFixed(2)}</div>`;
+}
+</script>
+
+<hr>
+
+<!-- ========== 3. RISK COMPARISON CHART ========== -->
+<h2>3. Risk Comparison Chart — MaRS vs Framingham Models</h2>
+<div class="chart-container"><canvas id="riskChart"></canvas></div>
+
+<script>
+let riskChart = null;
+function updateRiskChart() {
+  const ctx = document.getElementById('riskChart').getContext('2d');
+  const data = { labels:['MaRS','Framingham CHD (1998)','Framingham CVD (2008)'], datasets:[{ label:'10-Year Risk (%)', data:[12.5,9.8,9.8], backgroundColor:['#0e7afe','#ff8800','#cc0000'], borderColor:['#0b66d1','#cc6c00','#990000'], borderWidth:1 }]};
+  riskChart = new Chart(ctx,{ type:'bar', data:data, options:{ scales:{y:{beginAtZero:true,max:100,title:{display:true,text:'10-Year Risk (%)'}}}, plugins:{legend:{display:false}}}});
+}
+window.onload = updateRiskChart;
+</script>
+
+<hr>
+
+<!-- ========== LICENSE ========== -->
+<div id="license" class="card">
+  <h2>License and Citation</h2>
+  <p>MaRS is released under an <b>Open License</b> within the <i>Fast Science – Open Research</i> project and invites all professionals to contribute to its clinical validation.</p>
+  <p><b>Citation:</b><br>
+  Marciu, Vicențiu Bogdan Ion. (2025). <i>MaRS (Marciu Risk Score): Non-laboratory cardiovascular risk framework (v1.0.0).</i>
+  <a href="https://github.com/FS-OR/MaRS-Cardiovascular-10-year-Risk-Score-non-lab" target="_blank">GitHub Repository</a></p>
+</div>
+
+<div class="foot">
+  <p>© 2025 MaRS — Fast Science / Open Research</p>
+  <p>Developed by <a href="https://linkedin.com/in/bogdan-marciu" target="_blank">Vicențiu Bogdan Ion Marciu</a> |
+     <a href="https://github.com/FS-OR/MaRS-Cardiovascular-10-year-Risk-Score-non-lab" target="_blank">GitHub Repository</a></p>
+  <p>MaRS is a research framework and <b>NOT</b> a medical device. Clinical decisions remain with licensed clinicians.</p>
+</div>
+
+</body>
+</html>
 
