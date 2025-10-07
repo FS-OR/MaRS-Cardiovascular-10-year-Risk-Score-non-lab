@@ -1,0 +1,32 @@
+{
+  "model": "MaRS (Marciu Risk Score)",
+  "version": "1.0.0",
+  "type": "Non-laboratory cardiovascular risk framework",
+  "source": "Fast Science – Open Research",
+  "description": "Logistic regression coefficients for 10-year cardiovascular risk estimation based on clinical parameters (non-laboratory).",
+  "coefficients": {
+    "intercept": -3.2,
+    "age": 0.7,
+    "sex": 0.45,
+    "sbp": 0.18,
+    "treated": 0.15,
+    "smoke": 0.7,
+    "diabetes": 0.7,
+    "bmi": 0.22,
+    "family": 0.4
+  },
+  "calibration": {
+    "a": 1.0,
+    "b": 0.0
+  },
+  "notes": {
+    "sex": "1 = male, 0 = female",
+    "treated": "1 = on antihypertensive therapy, 0 = untreated",
+    "smoke": "1 = current smoker, 0 = non-smoker",
+    "diabetes": "1 = diabetic, 0 = non-diabetic",
+    "family": "1 = family history of premature CVD, 0 = none"
+  },
+  "license": "MaRS Open Collaboration License",
+  "author": "Vicențiu Bogdan Ion Marciu",
+  "date_released": "2025-10-07"
+}
