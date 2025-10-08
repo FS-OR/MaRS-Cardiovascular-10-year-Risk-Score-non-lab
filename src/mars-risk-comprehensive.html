@@ -39,23 +39,23 @@
         }
         </script><!DOCTYPE html>
 <!-- 
-  MaRS – Comprehensive Cardiovascular Risk Tools
+  MaRS — Comprehensive Cardiovascular Risk Tools
   Author: Vicențiu Bogdan Ion Marciu
-  Version: 1.0 – October 2025
+  Version: 1.0 — October 2025
   License: MaRS Open Collaboration License
-  License Version: 1.0 – 2025-10-06
+  License Version: 1.0 — 2025-10-06
 -->
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>MaRS – Comprehensive Cardiovascular Risk Tools</title>
+<title>MaRS — Comprehensive Cardiovascular Risk Tools</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 
 <style>
 /* MaRS – Style Sheet (v1.0)
    Author: Vicențiu Bogdan Ion Marciu
-   License: MaRS Open Collaboration License (Version 1.0 – 2025-10-06)
+   License: MaRS Open Collaboration License (Version 1.0 — 2025-10-06)
 */
 body {
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
@@ -203,19 +203,19 @@ hr {
 
 
 <div class="banner">
-  <h2>MaRS – Comprehensive Cardiovascular Risk Tools</h2>
+  <h2>MaRS — Comprehensive Cardiovascular Risk Tools</h2>
   <p>MaRS is a research project for non-laboratory cardiovascular risk determination, currently under validation within the <b>Fast Science – Open Research</b> initiative. It aims to promote simple and broad participation of health professionals in clinical research.</p>
   <p><a href="https://github.com/FS-OR/MaRS-Cardiovascular-10-year-Risk-Score-non-lab" target="_blank">GitHub Repository</a> | <a href="https://github.com/FS-OR/MaRS-Cardiovascular-10-year-Risk-Score-non-lab/blob/main/LICENSE" target="_blank">MaRS Open Collaboration License</a></p>
 </div>
 
 
-<h1>MaRS – Comprehensive Cardiovascular Risk Tools</h1>
+<h1>MaRS — Comprehensive Cardiovascular Risk Tools</h1>
 <hr>
 
 <!-- ======================================================
-1. BLOOD PRESSURE INTERPRETER – AHA vs ESH
+1. BLOOD PRESSURE INTERPRETER — AHA vs ESH
 ======================================================= -->
-<h2>1. Blood Pressure Interpreter – AHA vs ESH</h2>
+<h2>1. Blood Pressure Interpreter — AHA vs ESH</h2>
 
 <div class="card">
   <div class="row">
@@ -316,3 +316,333 @@ function diagnosticStatus(sbp, dbp, ctx){
 }
 
 function applyHeuristicCorrection(sbp, dbp, daytime, activity, apply){
+  let s = sbp, d = dbp;
+  if (apply && daytime && activity !== 'rest'){
+    const map = {light:{s:5,d:3}, moderate:{s:10,d:6}, vigorous:{s:15,d:10}};
+    const offs = map[activity] || {s:0,d:0};
+    s = Math.max(0, s - offs.s);
+    d = Math.max(0, d - offs.d);
+  }
+  return { sbp:s, dbp:d };
+}
+
+function toneClass(t){ return t === 'bad' ? 'bad pill' : (t === 'warn' ? 'warn pill' : 'ok pill'); }
+
+function run(){
+  const sbp = parseFloat(document.getElementById('sbp').value);
+  const dbp = parseFloat(document.getElementById('dbp').value);
+  const ctx = document.getElementById('context').value;
+  const daytime = document.getElementById('isDaytime').checked;
+  const activity = document.getElementById('activity').value;
+  const applyCorr = document.getElementById('applyCorr').checked;
+
+  if (isNaN(sbp) || isNaN(dbp)){
+    document.getElementById('results').innerHTML = '<div class="card">Please enter both SBP and DBP.</div>';
+    return;
+  }
+  if (dbp >= sbp){
+    document.getElementById('results').innerHTML = '<div class="card bad">Error: DBP must be lower than SBP.</div>';
+    return;
+  }
+
+  const corrected = applyHeuristicCorrection(sbp, dbp, daytime, activity, applyCorr);
+  const ahaCat = ahaCategory(corrected.sbp, corrected.dbp);
+  const eshCat = eshCategory(corrected.sbp, corrected.dbp);
+  const dx = diagnosticStatus(corrected.sbp, corrected.dbp, ctx);
+
+  const html = `
+    <div class="card">
+      <div><strong>Entered</strong> SBP ${format(sbp)}, DBP ${format(dbp)}</div>
+      <div><strong>Used</strong> SBP ${format(corrected.sbp)}, DBP ${format(corrected.dbp)} ${applyCorr ? '(Correction applied)' : ''}</div>
+    </div>
+    <div class="card">
+      <strong>AHA:</strong> <span class="${toneClass(ahaCat.tone)}">${ahaCat.label}</span><br>
+      <strong>ESH:</strong> <span class="${toneClass(eshCat.tone)}">${eshCat.label}</span><br>
+      <span class="muted">Context thresholds: AHA ${dx.t.aha.sbp}/${dx.t.aha.dbp}, ESH ${dx.t.esh.sbp}/${dx.t.esh.dbp}</span>
+    </div>`;
+  document.getElementById('results').innerHTML = html;
+}
+
+document.getElementById('isDaytime').addEventListener('change', e=>{
+  const on = e.target.checked;
+  document.getElementById('activityWrap').style.display = on ? 'block':'none';
+  document.getElementById('correctionWrap').style.display = on ? 'block':'none';
+});
+document.getElementById('runBtn').addEventListener('click', run);
+</script>
+
+<hr>
+
+<!-- ======================================================
+2. MaRS 10-YEAR CARDIOVASCULAR RISK CALCULATOR
+======================================================= -->
+<h2>2. MaRS 10-Year Cardiovascular Risk Calculator</h2>
+
+<div class="card">
+  <form id="mars-form">
+    <div class="row">
+      <div><label>Age (30-79)</label><input type="number" id="mars_age" min="30" max="79" required></div>
+      <div><label>Sex</label><select id="mars_sex"><option value="male">Male</option><option value="female">Female</option></select></div>
+      <div><label>SBP (90-200)</label><input type="number" id="mars_sbp" min="90" max="200" required></div>
+      <div><label>Antihypertensive tx</label><select id="mars_treated"><option value="no">No</option><option value="yes">Yes</option></select></div>
+      <div><label>Smoker</label><select id="mars_smoker"><option value="no">No</option><option value="yes">Yes</option></select></div>
+      <div><label>Diabetes</label><select id="mars_diabetes"><option value="no">No</option><option value="yes">Yes</option></select></div>
+      <div><label>BMI (16-50)</label><input type="number" id="mars_bmi" min="16" max="50" step="0.1" required></div>
+      <div><label>Family History</label><select id="mars_family"><option value="no">No</option><option value="yes">Yes</option></select></div>
+    </div>
+    <button class="btn" type="button" onclick="calculateMaRSRisk()">Calculate MaRS Risk</button>
+  </form>
+</div>
+
+<div id="mars-result" class="results"></div>
+
+<div class="card">
+  <p><b>Legend:</b></p>
+  <p>SBP = Systolic Blood Pressure<br>DBP = Diastolic Blood Pressure</p>
+</div>
+
+<script>
+function calculateMaRSRisk(){
+  const age = parseFloat(document.getElementById('mars_age').value);
+  const sex = (document.getElementById('mars_sex').value === 'male') ? 1 : 0;
+  const sbp = parseFloat(document.getElementById('mars_sbp').value);
+  const treated = (document.getElementById('mars_treated').value === 'yes') ? 1 : 0;
+  const smoker = (document.getElementById('mars_smoker').value === 'yes') ? 1 : 0;
+  const diabetes = (document.getElementById('mars_diabetes').value === 'yes') ? 1 : 0;
+  const bmi = parseFloat(document.getElementById('mars_bmi').value);
+  const family = (document.getElementById('mars_family').value === 'yes') ? 1 : 0;
+  if (isNaN(age) || isNaN(sbp) || isNaN(bmi)) {
+    document.getElementById('mars-result').innerHTML = '<div class="card">Invalid inputs.</div>';
+    return;
+  }
+  const logit = -3.2 + 0.70 * ((age - 50) / 10) + 0.45 * sex + 0.18 * ((sbp - 120) / 10) + 0.15 * treated + 0.70 * smoker + 0.70 * diabetes + 0.22 * ((bmi - 25) / 5) + 0.40 * family;
+  const risk = 100 / (1 + Math.exp(-logit));
+  let category, tone;
+  if (risk < 10) { category = 'Low'; tone = 'ok'; }
+  else if (risk < 20) { category = 'Intermediate'; tone = 'warn'; }
+  else { category = 'High'; tone = 'bad'; }
+  document.getElementById('mars-result').innerHTML = `<div class="card"><b>10-year risk:</b> ${risk.toFixed(2)}%<br><b>Category:</b> <span class="pill ${tone}">${category}</span><br><b>Logit:</b> ${logit.toFixed(2)}</div>`;
+  mars_risk_value = risk;
+  updateRiskChart();
+}
+</script>
+
+<hr>
+
+<!-- ======================================================
+3. FRAMINGHAM RISK CALCULATOR — CHD (1998), CVD (2008)
+======================================================= -->
+<h2>3. Framingham Risk Calculator — CHD & CVD</h2>
+
+<div class="card">
+  <div class="row">
+    <div>
+      <label>Risk model</label>
+      <select id="fr_model">
+        <option value="cvd2008">Framingham CVD (2008)</option>
+        <option value="chd1998">Framingham Hard CHD (1998)</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <form id="fr-riskForm">
+    <div class="row">
+      <div><label>Sex</label><select id="fr_sex"><option value="male">Male</option><option value="female">Female</option></select></div>
+      <div><label>Age (20-79)</label><input type="number" id="fr_age" min="20" max="79" value="50" required></div>
+      <div><label>Total Cholesterol (mg/dL, 100-400)</label><input type="number" id="fr_chol" min="100" max="400" value="200" required></div>
+      <div><label>HDL Cholesterol (mg/dL, 20-100)</label><input type="number" id="fr_hdl" min="20" max="100" value="50" required></div>
+      <div><label>SBP (mmHg, 90-200)</label><input type="number" id="fr_sbp" min="90" max="200" value="120" required></div>
+      <div><label>Antihypertensive tx</label><select id="fr_treat"><option value="no">No</option><option value="yes">Yes</option></select></div>
+      <div><label>Smoker</label><select id="fr_smoke"><option value="no">No</option><option value="yes">Yes</option></select></div>
+      <div><label>Diabetes</label><select id="fr_diab"><option value="no">No</option><option value="yes">Yes</option></select></div>
+    </div>
+    <button class="btn" type="button" onclick="fr_calculateRisk()">Calculate</button>
+  </form>
+</div>
+
+<div id="fr-result" class="results"></div>
+
+<div class="card">
+  <p><b>Legend:</b></p>
+  <p>SBP = Systolic Blood Pressure<br>DBP = Diastolic Blood Pressure</p>
+</div>
+
+<script>
+function fr_calculateRisk() {
+  const model = document.getElementById('fr_model').value;
+  const sex = document.getElementById('fr_sex').value === 'male' ? 1 : 0;
+  const age = parseFloat(document.getElementById('fr_age').value);
+  const chol = parseFloat(document.getElementById('fr_chol').value);
+  const hdl = parseFloat(document.getElementById('fr_hdl').value);
+  const sbp = parseFloat(document.getElementById('fr_sbp').value);
+  const treat = document.getElementById('fr_treat').value === 'yes' ? 1 : 0;
+  const smoke = document.getElementById('fr_smoke').value === 'yes' ? 1 : 0;
+  const diab = document.getElementById('fr_diab').value === 'yes' ? 1 : 0;
+
+  if (isNaN(age) || isNaN(chol) || isNaN(hdl) || isNaN(sbp)) {
+    document.getElementById('fr-result').innerHTML = '<div class="card">Invalid inputs.</div>';
+    return;
+  }
+
+  let resultHtml = '';
+  if (model === 'chd1998') {
+    // Framingham CHD (1998) - Point-based system
+    let points = 0;
+    if (sex === 1) { // Male
+      if (age < 35) points += -9; else if (age <= 39) points += -4; else if (age <= 44) points += 0; else if (age <= 49) points += 3;
+      else if (age <= 54) points += 6; else if (age <= 59) points += 8; else if (age <= 64) points += 10; else points += 11;
+      if (chol < 160) points += 0; else if (chol <= 199) points += 4; else if (chol <= 239) points += 7; else if (chol <= 279) points += 9; else points += 11;
+      if (hdl < 40) points += 2; else if (hdl <= 49) points += 1; else if (hdl <= 59) points += 0; else points += -1;
+      if (sbp < 120) points += 0; else if (sbp <= 129) points += 1; else if (sbp <= 139) points += 2; else if (sbp <= 159) points += 3; else points += 4;
+      if (treat) points += 2;
+      if (smoke) points += 8;
+      if (diab) points += 2;
+    } else { // Female
+      if (age < 35) points += -7; else if (age <= 39) points += -3; else if (age <= 44) points += 0; else if (age <= 49) points += 3;
+      else if (age <= 54) points += 6; else if (age <= 59) points += 8; else if (age <= 64) points += 10; else points += 12;
+      if (chol < 160) points += 0; else if (chol <= 199) points += 4; else if (chol <= 239) points += 8; else if (chol <= 279) points += 11; else points += 13;
+      if (hdl < 40) points += 2; else if (hdl <= 49) points += 1; else if (hdl <= 59) points += 0; else points += -1;
+      if (sbp < 120) points += 0; else if (sbp <= 129) points += 1; else if (sbp <= 139) points += 3; else if (sbp <= 159) points += 4; else points += 6;
+      if (treat) points += 2;
+      if (smoke) points += 9;
+      if (diab) points += 2;
+    }
+    let chdRisk = 0;
+    if (sex === 1) {
+      if (points <= 0) chdRisk = 1; else if (points <= 4) chdRisk = 2; else if (points <= 7) chdRisk = 5; else if (points <= 9) chdRisk = 8;
+      else if (points <= 11) chdRisk = 12; else if (points <= 13) chdRisk = 16; else if (points <= 15) chdRisk = 20; else chdRisk = 25;
+    } else {
+      if (points <= 9) chdRisk = 1; else if (points <= 12) chdRisk = 2; else if (points <= 15) chdRisk = 5; else if (points <= 17) chdRisk = 8;
+      else if (points <= 20) chdRisk = 11; else if (points <= 22) chdRisk = 14; else if (points <= 24) chdRisk = 18; else chdRisk = 24;
+    }
+    let chdCategory = chdRisk < 10 ? 'Low' : (chdRisk < 20 ? 'Intermediate' : 'High');
+    let chdTone = chdRisk < 10 ? 'ok' : (chdRisk < 20 ? 'warn' : 'bad');
+    chd_risk_value = chdRisk;
+    resultHtml = `
+      <div class="card">
+        <b>Framingham Points (CHD):</b><br>
+        <b>10-year risk:</b> ${chdRisk}% <span class="pill ${chdTone}">${chdCategory}</span><br>
+        <div class="toggle-details" onclick="toggleDetails('chd-details')">Show points breakdown</div>
+        <div id="chd-details" style="display:none;">
+          <p><b>Points breakdown:</b></p>
+          <p>Age: ${age}, Cholesterol: ${chol}, HDL: ${hdl}, SBP: ${sbp}, Treated: ${treat ? 'Yes' : 'No'}, Smoker: ${smoke ? 'Yes' : 'No'}, Diabetes: ${diab ? 'Yes' : 'No'}</p>
+          <p>Total Points: ${points}</p>
+          <p>Hard CHD endpoint (MI or coronary death).</p>
+        </div>
+      </div>`;
+  } else {
+    // Framingham CVD (2008) - Numeric model
+    let cvdLogit = 0;
+    if (sex === 1) { // Male
+      cvdLogit = 3.06117 * Math.log(age) + 1.12370 * Math.log(chol) - 0.93263 * Math.log(hdl) + 1.93303 * Math.log(sbp) * (1 - treat) + 2.00688 * Math.log(sbp) * treat + 0.65451 * smoke + 0.57367 * diab - 23.9802;
+    } else { // Female
+      cvdLogit = 2.32888 * Math.log(age) + 1.20904 * Math.log(chol) - 0.70833 * Math.log(hdl) + 2.76157 * Math.log(sbp) * (1 - treat) + 2.82263 * Math.log(sbp) * treat + 0.52873 * smoke + 0.69154 * diab - 26.1931;
+    }
+    const cvdRisk = 100 * (1 - Math.pow(0.95012, Math.exp(cvdLogit)));
+    let cvdCategory = cvdRisk < 10 ? 'Low' : (cvdRisk < 20 ? 'Intermediate' : 'High');
+    let cvdTone = cvdRisk < 10 ? 'ok' : (cvdRisk < 20 ? 'warn' : 'bad');
+    cvd_risk_value = cvdRisk;
+    resultHtml = `
+      <div class="card">
+        <b>Framingham Numeric (CVD):</b><br>
+        <b>10-year risk:</b> ${cvdRisk.toFixed(2)}% <span class="pill ${cvdTone}">${cvdCategory}</span><br>
+        <div class="toggle-details" onclick="toggleDetails('cvd-details')">Show numeric model details</div>
+        <div id="cvd-details" style="display:none;">
+          <p><b>Numeric model details:</b></p>
+          <p>Logit: ${cvdLogit.toFixed(2)}</p>
+          <p>Includes MI, stroke, heart failure, and PAD.</p>
+        </div>
+      </div>`;
+  }
+  document.getElementById('fr-result').innerHTML = resultHtml;
+  updateRiskChart();
+}
+
+function toggleDetails(id) {
+  const element = document.getElementById(id);
+  element.style.display = element.style.display === 'none' ? 'block' : 'none';
+}
+</script>
+
+<!-- ======================================================
+4. RISK COMPARISON CHART
+======================================================= -->
+<h2>4. Risk Comparison Chart</h2>
+<div class="chart-container">
+  <canvas id="riskChart"></canvas>
+</div>
+<button class="btn" onclick="updateRiskChart()">Compare Risks</button>
+
+<script>
+let riskChart = null;
+
+function updateRiskChart() {
+  const ctx = document.getElementById('riskChart').getContext('2d');
+  const data = {
+    labels: ['MaRS', 'Framingham CHD (1998)', 'Framingham CVD (2008)'],
+    datasets: [{
+      label: '10-Year Risk (%)',
+      data: [
+        mars_risk_value ? mars_risk_value.toFixed(2) : 0,
+        chd_risk_value ? chd_risk_value.toFixed(2) : 0,
+        cvd_risk_value ? cvd_risk_value.toFixed(2) : 0
+      ],
+      backgroundColor: ['#0e7afe', '#ff8800', '#cc0000'],
+      borderColor: ['#0b66d1', '#cc6c00', '#990000'],
+      borderWidth: 1
+    }]
+  };
+
+  if (riskChart) {
+    riskChart.data = data;
+    riskChart.update();
+  } else {
+    riskChart = new Chart(ctx, {
+      type: 'bar',
+      data: data,
+      options: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            title: { display: true, text: '10-Year Risk (%)' }
+          },
+          x: { title: { display: true, text: 'Risk Models' } }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: (context) => `${context.raw}%` } }
+        }
+      }
+    });
+  }
+}
+</script>
+
+<hr>
+
+<!-- ======================================================
+LICENSE AND CITATION
+======================================================= -->
+
+<div id="license" class="card">
+  <h2>License and Citation</h2>
+  <p>MaRS is released under an <b>Open License</b> within the <i>Fast Science – Open Research</i> project and invites all professionals to contribute to its clinical validation.</p>
+  <p><b>Citation:</b><br>
+  Marciu, Vicențiu Bogdan Ion. (2025). <i>MaRS (Marciu Risk Score): Non-laboratory cardiovascular risk framework (v1.0.0).</i> 
+  <a href="https://github.com/FS-OR/MaRS-Cardiovascular-10-year-Risk-Score-non-lab" target="_blank">GitHub Repository</a>
+  </p>
+</div>
+
+
+<div class="foot">
+  <p>© 2025 MaRS — Fast Science / Open Research</p>
+  <p>Developed by <a href="https://linkedin.com/in/bogdan-marciu" target="_blank">Vicențiu Bogdan Ion Marciu</a> | 
+     <a href="https://github.com/FS-OR/MaRS-Cardiovascular-10-year-Risk-Score-non-lab" target="_blank">GitHub Repository</a></p>
+  <p>MaRS is a research framework and <b>NOT</b> a medical device. Clinical decisions remain with licensed clinicians.</p>
+</div>
+
+</body>
+</html>
