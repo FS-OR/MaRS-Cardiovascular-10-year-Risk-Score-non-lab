@@ -1,275 +1,318 @@
-<!DOCTYPE html>
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<!-- 
+  MaRS – Comprehensive Cardiovascular Risk Tools
+  Author: Vicențiu Bogdan Ion Marciu
+  Version: 1.0 – October 2025
+  License: MaRS Open Collaboration License
+  License Version: 1.0 – 2025-10-06
+-->
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MaRS — Comprehensive Cardiovascular Risk Tools</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-            line-height: 1.6;
-        }
-        h1, h2, h3 {
-            color: #333;
-        }
-        .section {
-            margin-bottom: 40px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        input, select, button {
-            padding: 8px;
-            margin-right: 10px;
-        }
-        button {
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0056b3;
-        }
-        .notes, .legend {
-            background-color: #f8f8f8;
-            padding: 10px;
-            border-left: 4px solid #007BFF;
-            margin-top: 20px;
-        }
-        .license {
-            font-size: 0.9em;
-            color: #555;
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>MaRS – Comprehensive Cardiovascular Risk Tools</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
+<style>
+/* MaRS – Style Sheet (v1.0)
+   Author: Vicențiu Bogdan Ion Marciu
+   License: MaRS Open Collaboration License (Version 1.0 – 2025-10-06)
+*/
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  background-color: #f8f9fa;
+  margin: 40px auto;
+  max-width: 520px;
+  color: #222;
+}
+h1 {
+  text-align: center;
+  color: #0e7afe;
+  font-size: 1.8em;
+  margin-bottom: 20px;
+}
+h2 {
+  color: #0e7afe;
+  font-size: 1.4em;
+  margin-top: 30px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+.card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+label {
+  display: block;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+input,
+select {
+  width: 100%;
+  margin-top: 4px;
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 15px;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.btn {
+  width: 100%;
+  margin-top: 16px;
+  background-color: #0e7afe;
+  color: #fff;
+  border: none;
+  padding: 10px 0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+.btn:hover {
+  background-color: #0b66d1;
+}
+.results {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 600;
+}
+.ok {
+  color: #007e33;
+}
+.warn {
+  color: #ff8800;
+}
+.bad {
+  color: #cc0000;
+}
+.foot {
+  margin-top: 30px;
+  font-size: 13px;
+  text-align: center;
+  color: #555;
+  line-height: 1.4em;
+}
+hr {
+  margin: 25px 0;
+  border: none;
+  border-top: 1px solid #ddd;
+}
+.muted {
+  color: #666;
+  font-size: 13px;
+}
+.pill {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.chip {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  background: #f1f5f9;
+  color: #222;
+  margin-left: 6px;
+}
+.banner {
+  background: #e6f0ff;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+.banner a {
+  color: #0e7afe;
+  text-decoration: none;
+}
+.banner a:hover {
+  text-decoration: underline;
+}
+.toggle-details {
+  cursor: pointer;
+  color: #0e7afe;
+  font-size: 13px;
+  margin-top: 10px;
+}
+.chart-container {
+  margin-top: 20px;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+</style>
 </head>
 <body>
-    <header>
-        <h1>MaRS — Comprehensive Cardiovascular Risk Tools</h1>
-        <p>
-            MaRS is a research project for non-laboratory cardiovascular risk determination, currently under validation within the Fast Science – Open Research initiative. It aims to promote simple and broad participation of health professionals in clinical research.
-        </p>
-        <p><a href="https://github.com/MaRS-Project">GitHub Repository</a> | <a href="https://github.com/MaRS-Project/license">MaRS Open Collaboration License</a></p>
-    </header>
 
-    <div class="section">
-        <h2>1. Blood Pressure Interpreter — AHA vs ESH</h2>
-        <div class="form-group">
-            <label for="sbp">SBP (mmHg)</label>
-            <input type="number" id="sbp" name="sbp" placeholder="Enter SBP">
-        </div>
-        <div class="form-group">
-            <label for="dbp">DBP (mmHg)</label>
-            <input type="number" id="dbp" name="dbp" placeholder="Enter DBP">
-        </div>
-        <div class="form-group">
-            <label for="context">Context</label>
-            <select id="context" name="context">
-                <option value="office">Office / Clinic</option>
-                <option value="home">Home or ABPM Daytime</option>
-                <option value="night">ABPM Nighttime</option>
-                <option value="24h">ABPM 24h Average</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="daytime">Measurement during daytime?</label>
-            <input type="checkbox" id="daytime" name="daytime">
-        </div>
-        <div class="form-group">
-            <label for="activity">Activity level at/within 30 min</label>
-            <select id="activity" name="activity">
-                <option value="rest">Seated rest (5+ min)</option>
-                <option value="light">Light (walking casually, chores)</option>
-                <option value="moderate">Moderate (brisk walk, stairs, cycling < 15 km/h)</option>
-                <option value="vigorous">Vigorous (running, HIIT, heavy lifting)</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="heuristic">
-                <input type="checkbox" id="heuristic" name="heuristic">
-                Apply heuristic correction for recent activity
-            </label>
-            <p>Not a medical adjustment. Prefer resting 5 minutes and re-measure.</p>
-        </div>
-        <button onclick="interpretBloodPressure()">Interpret</button>
 
-        <div class="notes">
-            <h3>Notes:</h3>
-            <ul>
-                <li>Classification chooses the higher category if SBP and DBP differ.</li>
-                <li>Diagnostic thresholds depend on context (office/home/night/24h).</li>
-                <li>Heuristic correction subtracts small offsets if measured during activity: light -5/-3, moderate -10/-6, vigorous -15/-10 mmHg.</li>
-                <li>For medical decisions, use standardized measurements and professional guidance.</li>
-            </ul>
-        </div>
-        <div class="legend">
-            <h3>Legend:</h3>
-            <p>SBP = Systolic Blood Pressure</p>
-            <p>DBP = Diastolic Blood Pressure</p>
-        </div>
+<div class="banner">
+  <h2>MaRS – Comprehensive Cardiovascular Risk Tools</h2>
+  <p>MaRS is a research project for non-laboratory cardiovascular risk determination, currently under validation within the <b>Fast Science – Open Research</b> initiative. It aims to promote simple and broad participation of health professionals in clinical research.</p>
+  <p><a href="https://github.com/FS-OR/MaRS-Cardiovascular-10-year-Risk-Score-non-lab" target="_blank">GitHub Repository</a> | <a href="https://github.com/FS-OR/MaRS-Cardiovascular-10-year-Risk-Score-non-lab/blob/main/LICENSE" target="_blank">MaRS Open Collaboration License</a></p>
+</div>
+
+
+<h1>MaRS – Comprehensive Cardiovascular Risk Tools</h1>
+<hr>
+
+<!-- ======================================================
+1. BLOOD PRESSURE INTERPRETER – AHA vs ESH
+======================================================= -->
+<h2>1. Blood Pressure Interpreter – AHA vs ESH</h2>
+
+<div class="card">
+  <div class="row">
+    <div>
+      <label for="sbp">SBP (mmHg)</label>
+      <input id="sbp" type="number" min="50" max="260" step="1" placeholder="e.g. 128">
     </div>
-
-    <div class="section">
-        <h2>2. MaRS 10-Year Cardiovascular Risk Calculator</h2>
-        <div class="form-group">
-            <label for="age">Age (30-79)</label>
-            <input type="number" id="age" name="age" min="30" max="79" placeholder="Enter age">
-        </div>
-        <div class="form-group">
-            <label for="sex">Sex</label>
-            <select id="sex" name="sex">
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="sbp2">SBP (90-200)</label>
-            <input type="number" id="sbp2" name="sbp2" min="90" max="200" placeholder="Enter SBP">
-        </div>
-        <div class="form-group">
-            <label for="antihypertensive">Antihypertensive tx</label>
-            <select id="antihypertensive" name="antihypertensive">
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="smoker">Smoker</label>
-            <select id="smoker" name="smoker">
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="diabetes">Diabetes</label>
-            <select id="diabetes" name="diabetes">
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="bmi">BMI (16-50)</label>
-            <input type="number" id="bmi" name="bmi" min="16" max="50" placeholder="Enter BMI">
-        </div>
-        <div class="form-group">
-            <label for="family_history">Family History</label>
-            <select id="family_history" name="family_history">
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-            </select>
-        </div>
-        <button onclick="calculateMaRSRisk()">Calculate MaRS Risk</button>
-
-        <div class="legend">
-            <h3>Legend:</h3>
-            <p>SBP = Systolic Blood Pressure</p>
-            <p>DBP = Diastolic Blood Pressure</p>
-        </div>
+    <div>
+      <label for="dbp">DBP (mmHg)</label>
+      <input id="dbp" type="number" min="30" max="160" step="1" placeholder="e.g. 82">
     </div>
-
-    <div class="section">
-        <h2>3. Framingham Risk Calculator — CHD & CVD</h2>
-        <div class="form-group">
-            <label for="risk_model">Risk model</label>
-            <select id="risk_model" name="risk_model">
-                <option value="cvd">Framingham CVD (2008)</option>
-                <option value="chd">Framingham Hard CHD (1998)</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="sex2">Sex</label>
-            <select id="sex2" name="sex2">
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="age2">Age (20-79)</label>
-            <input type="number" id="age2" name="age2" min="20" max="79" placeholder="Enter age">
-        </div>
-        <div class="form-group">
-            <label for="total_cholesterol">Total Cholesterol (mg/dL, 100-400)</label>
-            <input type="number" id="total_cholesterol" name="total_cholesterol" min="100" max="400" placeholder="Enter total cholesterol">
-        </div>
-        <div class="form-group">
-            <label for="hdl_cholesterol">HDL Cholesterol (mg/dL, 20-100)</label>
-            <input type="number" id="hdl_cholesterol" name="hdl_cholesterol" min="20" max="100" placeholder="Enter HDL cholesterol">
-        </div>
-        <div class="form-group">
-            <label for="sbp3">SBP (mmHg, 90-200)</label>
-            <input type="number" id="sbp3" name="sbp3" min="90" max="200" placeholder="Enter SBP">
-        </div>
-        <div class="form-group">
-            <label for="antihypertensive2">Antihypertensive tx</label>
-            <select id="antihypertensive2" name="antihypertensive2">
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="smoker2">Smoker</label>
-            <select id="smoker2" name="smoker2">
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-            </select>
-        </div>
-        <div class="form-group">
-            <label for="diabetes2">Diabetes</label>
-            <select id="diabetes2" name="diabetes2">
-                <option value="no">No</option>
-                <option value="yes">Yes</option>
-            </select>
-        </div>
-        <button onclick="calculateFraminghamRisk()">Calculate</button>
-
-        <div class="legend">
-            <h3>Legend:</h3>
-            <p>SBP = Systolic Blood Pressure</p>
-            <p>DBP = Diastolic Blood Pressure</p>
-        </div>
+    <div>
+      <label for="context">Context</label>
+      <select id="context">
+        <option value="office">Office / Clinic</option>
+        <option value="home_day">Home or ABPM Daytime</option>
+        <option value="night">ABPM Nighttime</option>
+        <option value="twentyfour">ABPM 24h Average</option>
+      </select>
     </div>
+  </div>
 
-    <div class="section">
-        <h2>4. Risk Comparison Chart</h2>
-        <button onclick="compareRisks()">Compare Risks</button>
-        <div id="riskChart"></div>
+  <div class="row" style="margin-top:12px;">
+    <div>
+      <label><input id="isDaytime" type="checkbox"> Measurement during daytime?</label>
     </div>
-
-    <div class="section license">
-        <h2>License and Citation</h2>
-        <p>MaRS is released under an Open License within the Fast Science – Open Research project and invites all professionals to contribute to its clinical validation.</p>
-        <p><strong>Citation:</strong></p>
-        <p>Marciu, Vicențiu Bogdan Ion. (2025). MaRS (Marciu Risk Score): Non-laboratory cardiovascular risk framework (v1.0.0). <a href="https://github.com/MaRS-Project">GitHub Repository</a></p>
+    <div id="activityWrap" style="display:none;">
+      <label for="activity">Activity level at/within 30 min</label>
+      <select id="activity">
+        <option value="rest">Seated rest (5+ min)</option>
+        <option value="light">Light (walking casually, chores)</option>
+        <option value="moderate">Moderate (brisk walk, stairs, cycling &lt; 15 km/h)</option>
+        <option value="vigorous">Vigorous (running, HIIT, heavy lifting)</option>
+      </select>
     </div>
+    <div id="correctionWrap" style="display:none;">
+      <label class="small"><input id="applyCorr" type="checkbox"> Apply heuristic correction for recent activity</label>
+      <div class="muted small">Not a medical adjustment. Prefer resting 5 minutes and re-measure.</div>
+    </div>
+  </div>
 
-    <footer>
-        <p>© 2025 MaRS — Fast Science / Open Research</p>
-        <p>Developed by Vicențiu Bogdan Ion Marciu | <a href="https://github.com/MaRS-Project">GitHub Repository</a></p>
-        <p><strong>MaRS is a research framework and NOT a medical device. Clinical decisions remain with licensed clinicians.</strong></p>
-    </footer>
+  <button class="btn" id="runBtn">Interpret</button>
+</div>
 
-    <script>
-        // Placeholder for JavaScript functions
-        function interpretBloodPressure() {
-            alert("Blood Pressure Interpretation is not implemented yet.");
-        }
+<div class="results" id="results"></div>
 
-        function calculateMaRSRisk() {
-            alert("MaRS Risk Calculation is not implemented yet.");
-        }
+<div class="card">
+  <p><b>Notes:</b></p>
+  <ul>
+    <li>Classification chooses the higher category if SBP and DBP differ.</li>
+    <li>Diagnostic thresholds depend on context (office/home/night/24h).</li>
+    <li>Heuristic correction subtracts small offsets if measured during activity: light -5/-3, moderate -10/-6, vigorous -15/-10 mmHg.</li>
+    <li>For medical decisions, use standardized measurements and professional guidance.</li>
+  </ul>
+  <p><b>Legend:</b></p>
+  <p>SBP = Systolic Blood Pressure<br>DBP = Diastolic Blood Pressure</p>
+</div>
 
-        function calculateFraminghamRisk() {
-            alert("Framingham Risk Calculation is not implemented yet.");
-        }
+<!-- BP SCRIPT -->
+<script>
+let mars_risk_value = null;
+let chd_risk_value = null;
+let cvd_risk_value = null;
 
-        function compareRisks() {
-            alert("Risk Comparison Chart is not implemented yet.");
-        }
-    </script>
-</body>
-</html>
+const format = (n) => isNaN(n) ? '' : Math.round(n);
+
+function ahaCategory(sbp, dbp){
+  if (sbp >= 180 || dbp >= 120) return {label: 'Hypertensive Crisis', tone: 'bad'};
+  if (sbp >= 140 || dbp >= 90) return {label: 'Stage 2 Hypertension', tone: 'bad'};
+  if ((sbp >= 130 && sbp <= 139) || (dbp >= 80 && dbp <= 89)) return {label: 'Stage 1 Hypertension', tone: 'warn'};
+  if (sbp >= 120 && sbp <= 129 && dbp < 80) return {label: 'Elevated', tone: 'warn'};
+  if (sbp < 120 && dbp < 80) return {label: 'Normal', tone: 'ok'};
+  return {label: 'Uncategorized', tone: 'ok'};
+}
+
+function eshCategory(sbp, dbp){
+  if (sbp >= 180 || dbp >= 110) return {label: 'Grade 3 Hypertension', tone: 'bad'};
+  if ((sbp >= 160 && sbp <= 179) || (dbp >= 100 && dbp <= 109)) return {label: 'Grade 2 Hypertension', tone: 'bad'};
+  if ((sbp >= 140 && sbp <= 159) || (dbp >= 90 && dbp <= 99)) return {label: 'Grade 1 Hypertension', tone: 'warn'};
+  if ((sbp >= 130 && sbp <= 139) || (dbp >= 85 && dbp <= 89)) return {label: 'High Normal', tone: 'warn'};
+  if ((sbp >= 120 && sbp <= 129) || (dbp >= 80 && dbp <= 84)) return {label: 'Normal', tone: 'ok'};
+  if (sbp < 120 && dbp < 80) return {label: 'Optimal', tone: 'ok'};
+  return {label: 'Uncategorized', tone: 'ok'};
+}
+
+const thresholds = {
+  office: { aha:{sbp:130, dbp:80}, esh:{sbp:140, dbp:90} },
+  home_day: { aha:{sbp:130, dbp:80}, esh:{sbp:135, dbp:85} },
+  night: { aha:{sbp:110, dbp:65}, esh:{sbp:120, dbp:70} },
+  twentyfour: { aha:{sbp:125, dbp:75}, esh:{sbp:130, dbp:80} }
+};
+
+function diagnosticStatus(sbp, dbp, ctx){
+  const t = thresholds[ctx];
+  const ahaDx = (sbp >= t.aha.sbp) || (dbp >= t.aha.dbp);
+  const eshDx = (sbp >= t.esh.sbp) || (dbp >= t.esh.dbp);
+  return { ahaDx, eshDx, t };
+}
+
+function applyHeuristicCorrection(sbp, dbp, daytime, activity, apply){
